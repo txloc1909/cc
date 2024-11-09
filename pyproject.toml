@@ -6,6 +6,9 @@ authors = ["Tran Xuan Loc <tranxuanloc19920@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+[tool.poetry.scripts]
+cc = "cc:main"
+
 [tool.poetry.dependencies]
 python = ">=3.10"
 
