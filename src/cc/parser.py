@@ -11,9 +11,16 @@ class Parser:
     def current_token(self):
         return self.tokens[self.curr] if self.curr < len(self.tokens) else None
 
-    # <program> ::= <function>
+    # <program> ::= <function> { <function> }
     def parse_program(self):
-        return self.parse_function()
+        programs = []
+        while self.current_token is not None:
+            programs.append(self.parse_function())
+
+        if not programs:
+            raise ParserError("No valid top-level program found")
+        
+        return programs
 
     # <function> ::= "int" <identifier> "(" "void" ")" "{" <statement> "}"
     def parse_function(self):
