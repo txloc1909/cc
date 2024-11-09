@@ -4,7 +4,7 @@ class ParserError(Exception):
 
 class Parser:
     def __init__(self, tokens):
-        self.tokens = tokens
+        self.tokens = [token for token in tokens if token[0] != "COMMENT"]
         self.curr = 0
 
     @property
