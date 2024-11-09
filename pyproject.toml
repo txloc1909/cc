@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "cc"
+version = "0.1.0"
+description = "Writing a C Compiler"
+authors = ["Tran Xuan Loc <tranxuanloc19920@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+black = "^24.10.0"
+pre-commit = "^4.0.1"
+ruff = "^0.7.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
