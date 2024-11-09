@@ -42,9 +42,6 @@ def main():
             tokens = lex(source)
         except ValueError: 
             sys.exit(1)
-
-        for token in tokens:
-            print(token)
     elif args.parse:
         print("Parsing")
     elif args.codegen:

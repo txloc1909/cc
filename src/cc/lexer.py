@@ -12,10 +12,14 @@ TOKEN_PATTERNS = [
     ("RPAREN", r"\)"),
     ("LBRACE", r"{"),
     ("RBRACE", r"}"),
-    ("SEMICOLON", r";")
+    ("SEMICOLON", r";"),
+    ("COMMENT", r"//.*?$|/\*.*?\*/"),
 ]
 
-TOKEN_REGEX = [(token_type, re.compile(pattern)) for token_type, pattern in TOKEN_PATTERNS]
+TOKEN_REGEX = [
+    (token_type, re.compile(pattern, re.DOTALL | re.MULTILINE)) 
+    for token_type, pattern in TOKEN_PATTERNS
+]
 
 
 def lex(source):
