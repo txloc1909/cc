@@ -3,6 +3,7 @@ import os
 import sys
 
 from .lexer import lex
+from .parser import Parser, ParserError
 
 
 def main():
@@ -43,7 +44,16 @@ def main():
         except ValueError: 
             sys.exit(1)
     elif args.parse:
-        print("Parsing")
+        try: 
+            tokens = lex(source)
+        except ValueError: 
+            sys.exit(1)
+
+        try:
+            program = Parser(tokens).parse_program()
+        except ParserError:
+            sys.exit(1)
+
     elif args.codegen:
         print("Codegen")
     elif args.S:
