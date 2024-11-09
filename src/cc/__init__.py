@@ -1,5 +1,8 @@
 import argparse
+import os
 import sys
+
+from .lexer import lex
 
 
 def main():
@@ -30,9 +33,18 @@ def main():
     
     args = parser.parse_args()
     
-    print(args.input_file)
+    assert os.path.exists(args.input_file)
+    with open(args.input_file, "r") as f:
+        source = f.read()
+
     if args.lex:
-        print("Lexing")
+        try: 
+            tokens = lex(source)
+        except ValueError: 
+            sys.exit(1)
+
+        for token in tokens:
+            print(token)
     elif args.parse:
         print("Parsing")
     elif args.codegen:
