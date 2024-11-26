@@ -1,3 +1,29 @@
+from typing import List, Any, NamedTuple
+
+
+__all__ = ["Parser", "ParserError", ]
+
+
+class Literal(NamedTuple):
+    type: str
+    value: Any
+
+
+class Statement(NamedTuple):
+    type: str
+    value: Any
+
+
+class Function(NamedTuple):
+    type: str
+    name: str
+    body: Statement
+
+
+class Program(NamedTuple): 
+    functions: List[Function]
+
+
 class ParserError(Exception):
     pass
 
@@ -13,14 +39,14 @@ class Parser:
 
     # <program> ::= <function> { <function> }
     def parse_program(self):
-        programs = []
+        functions = []
         while self.current_token is not None:
-            programs.append(self.parse_function())
+            functions.append(self.parse_function())
 
-        if not programs:
+        if not functions:
             raise ParserError("No valid top-level program found")
         
-        return programs
+        return Program(functions=functions)
 
     # <function> ::= "int" <identifier> "(" "void" ")" "{" <statement> "}"
     def parse_function(self):
@@ -32,21 +58,14 @@ class Parser:
         self.expect("LBRACE")                   # Expect "{"
         statement = self.parse_statement()      # Parse the statement
         self.expect("RBRACE")                   # Expect "}"
-        return {
-            "type": "Function",
-            "name": identifier[1],
-            "body": statement
-        }
+        return Function(type="Function", name=identifier[1], body=statement)
 
     # <statement> ::= "return" <exp> ";"
     def parse_statement(self):
         self.expect("KEYWORD")                  # Expect "return"
         expression = self.parse_exp()           # Parse the expression
         self.expect("SEMICOLON")                # Expect ";"
-        return {
-            "type": "ReturnStatement",
-            "value": expression
-        }
+        return Statement(type="ReturnStatement", value=expression)
 
     # <exp> ::= <int>
     def parse_exp(self):
@@ -55,10 +74,7 @@ class Parser:
     # <int> ::= ? A constant token ?
     def parse_int(self):
         int_token = self.expect("INTEGER_CONST")  # Expect an integer constant
-        return {
-            "type": "IntegerLiteral",
-            "value": int(int_token[1])
-        }
+        return Literal(type="IntegerLiteral", value=int(int_token[1]))
 
 
     def advance(self):
