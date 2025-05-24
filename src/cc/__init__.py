@@ -4,6 +4,7 @@ import sys
 
 from .lexer import lex
 from .parser import Parser, ParserError
+from .codegen import codegen, emit_assembly
 
 
 def main():
@@ -55,8 +56,12 @@ def main():
             sys.exit(1)
 
     elif args.codegen:
-        print("Codegen")
+        program = Parser(lex(source)).parse_program()
+        print(codegen(program))
     elif args.S:
-        print("Emitting assembly file")
+        exe_name, ext = os.path.splitext(os.path.basename(args.input_file))
+        assert ext == ".c"
+        program = Parser(lex(source)).parse_program()
+        emit_assembly(program, f"{exe_name}.s")
     else:
         print("No option")
