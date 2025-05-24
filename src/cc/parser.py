@@ -1,7 +1,10 @@
 from typing import List, Any, NamedTuple
 
 
-__all__ = ["Parser", "ParserError", ]
+__all__ = [
+    "Parser",
+    "ParserError",
+]
 
 
 class Literal(NamedTuple):
@@ -20,7 +23,7 @@ class Function(NamedTuple):
     body: Statement
 
 
-class Program(NamedTuple): 
+class Program(NamedTuple):
     functions: List[Function]
 
 
@@ -45,26 +48,26 @@ class Parser:
 
         if not functions:
             raise ParserError("No valid top-level program found")
-        
+
         return Program(functions=functions)
 
     # <function> ::= "int" <identifier> "(" "void" ")" "{" <statement> "}"
     def parse_function(self):
-        self.expect("KEYWORD")                  # Expect "int"
+        self.expect("KEYWORD")  # Expect "int"
         identifier = self.expect("IDENTIFIER")  # Expect function name
-        self.expect("LPAREN")                   # Expect "("
-        self.expect("KEYWORD")                  # Expect "void"
-        self.expect("RPAREN")                   # Expect ")"
-        self.expect("LBRACE")                   # Expect "{"
-        statement = self.parse_statement()      # Parse the statement
-        self.expect("RBRACE")                   # Expect "}"
+        self.expect("LPAREN")  # Expect "("
+        self.expect("KEYWORD")  # Expect "void"
+        self.expect("RPAREN")  # Expect ")"
+        self.expect("LBRACE")  # Expect "{"
+        statement = self.parse_statement()  # Parse the statement
+        self.expect("RBRACE")  # Expect "}"
         return Function(type="Function", name=identifier[1], body=statement)
 
     # <statement> ::= "return" <exp> ";"
     def parse_statement(self):
-        self.expect("KEYWORD")                  # Expect "return"
-        expression = self.parse_exp()           # Parse the expression
-        self.expect("SEMICOLON")                # Expect ";"
+        self.expect("KEYWORD")  # Expect "return"
+        expression = self.parse_exp()  # Parse the expression
+        self.expect("SEMICOLON")  # Expect ";"
         return Statement(type="ReturnStatement", value=expression)
 
     # <exp> ::= <int>
@@ -75,7 +78,6 @@ class Parser:
     def parse_int(self):
         int_token = self.expect("INTEGER_CONST")  # Expect an integer constant
         return Literal(type="IntegerLiteral", value=int(int_token[1]))
-
 
     def advance(self):
         self.curr += 1

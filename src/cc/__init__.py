@@ -9,48 +9,48 @@ from .parser import Parser, ParserError
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", type=str, help="Input source file")
-    
+
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
-        "--lex", 
-        action="store_true", 
+        "--lex",
+        action="store_true",
         help="Only perform lexing",
     )
     group.add_argument(
-        "--parse", 
-        action="store_true", 
+        "--parse",
+        action="store_true",
         help="Only perform parsing",
     )
     group.add_argument(
-        "--codegen", 
-        action="store_true", 
+        "--codegen",
+        action="store_true",
         help="Only perform generating assembly",
     )
     group.add_argument(
-        "-S", 
-        action="store_true", 
+        "-S",
+        action="store_true",
         help="Emit assembly file",
     )
-    
+
     args = parser.parse_args()
-    
+
     assert os.path.exists(args.input_file)
     with open(args.input_file, "r") as f:
         source = f.read()
 
     if args.lex:
-        try: 
+        try:
             tokens = lex(source)
-        except ValueError: 
+        except ValueError:
             sys.exit(1)
     elif args.parse:
-        try: 
+        try:
             tokens = lex(source)
-        except ValueError: 
+        except ValueError:
             sys.exit(1)
 
         try:
-            program = Parser(tokens).parse_program()
+            program = Parser(tokens).parse_program()  # noqa: F841
         except ParserError:
             sys.exit(1)
 
@@ -60,4 +60,3 @@ def main():
         print("Emitting assembly file")
     else:
         print("No option")
-

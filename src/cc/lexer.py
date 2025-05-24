@@ -1,6 +1,8 @@
 import re
 
-__all__ = ["lex", ]
+__all__ = [
+    "lex",
+]
 
 
 TOKEN_PATTERNS = [
@@ -17,7 +19,7 @@ TOKEN_PATTERNS = [
 ]
 
 TOKEN_REGEX = [
-    (token_type, re.compile(pattern, re.DOTALL | re.MULTILINE)) 
+    (token_type, re.compile(pattern, re.DOTALL | re.MULTILINE))
     for token_type, pattern in TOKEN_PATTERNS
 ]
 
@@ -33,10 +35,9 @@ def lex(source):
             if match:
                 matched_text = match.group(0)
                 tokens.append((token_type, matched_text))
-                source = source[len(matched_text):]
+                source = source[len(matched_text) :]
                 break
         else:
             raise ValueError(f"Unexpected token at: {source[:20]}")
 
     return tokens
-
