@@ -1,10 +1,11 @@
 import argparse
 import os
 import sys
+import subprocess
 
 from .lexer import lex
 from .parser import Parser, ParserError
-from .codegen import codegen, emit_assembly
+from .codegen import codegen
 
 
 def main():
@@ -39,29 +40,41 @@ def main():
     with open(args.input_file, "r") as f:
         source = f.read()
 
+    try:
+        tokens = lex(source)
+    except ValueError:
+        sys.exit(1)
+
     if args.lex:
-        try:
-            tokens = lex(source)
-        except ValueError:
-            sys.exit(1)
-    elif args.parse:
-        try:
-            tokens = lex(source)
-        except ValueError:
-            sys.exit(1)
+        return
 
-        try:
-            program = Parser(tokens).parse_program()  # noqa: F841
-        except ParserError:
-            sys.exit(1)
+    try:
+        program = Parser(tokens).parse_program()
+    except ParserError:
+        sys.exit(1)
 
-    elif args.codegen:
-        program = Parser(lex(source)).parse_program()
-        print(codegen(program))
-    elif args.S:
-        exe_name, ext = os.path.splitext(os.path.basename(args.input_file))
-        assert ext == ".c"
-        program = Parser(lex(source)).parse_program()
-        emit_assembly(program, f"{exe_name}.s")
-    else:
-        print("No option")
+    if args.parse:
+        return
+
+    code = codegen(program)
+    if args.codegen:
+        print(code)
+        return
+
+    base_dir = os.path.dirname(args.input_file)
+    exe_name, ext = os.path.splitext(os.path.basename(args.input_file))
+    assert ext == ".c"
+    output_asm = f"{base_dir}/{exe_name}.s"
+    output_exe = f"{base_dir}/{exe_name}"
+    with open(output_asm, "w") as f:
+        f.write(code)
+
+    if args.S:
+        return
+
+    args = ["gcc", output_asm, "-o", output_exe]
+    subprocess.run(args, capture_output=True, check=False, text=True)
+    assert os.path.exists(output_asm)
+    assert os.path.exists(output_exe)
+    os.remove(output_asm)  # clean up
+    return

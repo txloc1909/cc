@@ -82,10 +82,3 @@ def codegen(program: Program) -> str:
     asm = ast_to_asm(program)
     code = _gen_asm_program(asm)
     return "\n".join(code)
-
-
-def emit_assembly(program: Program, filename: str) -> None:
-    asm = codegen(program)
-
-    with open(filename, "w") as f:
-        f.write(asm)
