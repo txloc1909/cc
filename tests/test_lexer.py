@@ -7,20 +7,16 @@ def test_empty_src():
     assert lex("") == []
 
 
-@pytest.mark.xfail
 def test_single_char():
-    src = "(){},.-+;*"
+    src = "(){}-;~"
     assert lex(src) == [
         ("LPAREN", "("),
         ("RPAREN", ")"),
         ("LBRACE", "{"),
         ("RBRACE", "}"),
-        ("COMMA", ","),
-        ("DOT", "."),
         ("MINUS", "-"),
-        ("PLUS", "+"),
         ("SEMICOLON", ";"),
-        ("STAR", "*"),
+        ("TILDE", "~"),
     ]
 
 

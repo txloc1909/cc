@@ -15,6 +15,9 @@ TOKEN_PATTERNS = [
     ("LBRACE", r"{"),
     ("RBRACE", r"}"),
     ("SEMICOLON", r";"),
+    ("MINUS", r"-"),
+    ("TILDE", r"~"),
+    ("BANG", r"!"),
     ("COMMENT", r"//.*?$|/\*.*?\*/"),
 ]
 
