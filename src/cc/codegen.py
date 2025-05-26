@@ -3,6 +3,10 @@ from typing import List, Any, NamedTuple
 
 from .parser import Program
 
+__all__ = [
+    "codegen",
+]
+
 
 class Instruction(NamedTuple):
     opcode: str
