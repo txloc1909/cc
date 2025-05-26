@@ -14,6 +14,12 @@ def test_parse_unary():
     assert parse_unary("-42") == UnaryExpr(
         op="-", rhs=Literal(type="IntegerLiteral", value=42)
     )
+
+    assert parse_unary("-(~42)") == UnaryExpr(
+        op="-",
+        rhs=UnaryExpr(op="~", rhs=Literal(type="IntegerLiteral", value=42)),
+    )
+
     assert parse_unary("!~-42") == UnaryExpr(
         op="!",
         rhs=UnaryExpr(

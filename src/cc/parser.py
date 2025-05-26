@@ -90,15 +90,20 @@ class Parser:
         self.expect("SEMICOLON")  # Expect ";"
         return Statement(type="ReturnStatement", value=expression)
 
-    # <exp> ::= <unary_op> <exp> | <int>
+    # <exp> ::= "(" <exp> ")" | <unary_op> <exp> | <int>
     def parse_exp(self):
         next_type = self.current_token[0] if self.current_token else None
         if next_type == "INTEGER_CONST":
             return self.parse_int()
+        elif next_type == "LPAREN":
+            self.advance()
+            inner = self.parse_exp()
+            self.expect("RPAREN")
+            return inner
         else:
             return self.parse_unary()
 
-    # <unary_op> ::= "-" | "~" | "-"
+    # <unary_op> ::= "-" <exp> | "~" <exp> | "-" <exp>
     def parse_unary(self):
         match self.current_token:
             case ("MINUS", "-"):
