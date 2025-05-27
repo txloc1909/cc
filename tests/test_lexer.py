@@ -1,8 +1,15 @@
+import pytest
+
 from cc.lexer import lex
 
 
 def test_empty_src():
     assert lex("") == []
+
+
+def test_invalid_char():
+    with pytest.raises(ValueError, match="Unexpected token at:"):
+        lex("@")
 
 
 def test_single_char():
