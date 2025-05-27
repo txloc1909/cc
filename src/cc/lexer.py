@@ -10,21 +10,39 @@ TOKEN_PATTERNS = [
     ("KEYWORD", r"\b(?:int|void|return)\b"),  # Just these keywords, for now
     ("IDENTIFIER", r"[a-zA-Z_]\w*\b"),
     ("INTEGER_CONST", r"[0-9]+\b"),
+    # two-char tokens before one-char tokens, longest match first
+    ("AMP_AMP", r"&&"),
+    ("MINUS_MINUS", r"--"),
+    ("PLUS_PLUS", r"\+\+"),
+    ("EQUAL_EQUAL", r"=="),
+    ("LESS_EQUAL", r"<="),
+    ("GREATER_EQUAL", r">="),
+    ("PIPE_PIPE", r"\|\|"),
+    ("BANG_EQUAL", r"!="),
+    # one-char tokens
     ("LPAREN", r"\("),
     ("RPAREN", r"\)"),
     ("LBRACE", r"{"),
     ("RBRACE", r"}"),
     ("SEMICOLON", r";"),
     ("MINUS", r"-"),
+    ("PLUS", r"\+"),
+    ("EQUAL", r"="),
+    ("LESS", r"<"),
+    ("GREATER", r">"),
+    ("AMP", r"&"),
+    ("PIPE", r"\|"),
     ("TILDE", r"~"),
     ("BANG", r"!"),
+    # misc
     ("COMMENT", r"//.*?$|/\*.*?\*/"),
+    ("WHITESPACE", r"\s+"),
 ]
 
-TOKEN_REGEX = [
-    (token_type, re.compile(pattern, re.DOTALL | re.MULTILINE))
-    for token_type, pattern in TOKEN_PATTERNS
-]
+TOKEN_REGEX = "|".join(
+    f"(?P<{token_type}>{pattern})" for token_type, pattern in TOKEN_PATTERNS
+)
+COMPILED_REGEX = re.compile(TOKEN_REGEX, re.MULTILINE | re.DOTALL)
 
 
 def lex(source):
@@ -33,14 +51,14 @@ def lex(source):
         if not (source := source.lstrip()):
             break
 
-        for token_type, regex in TOKEN_REGEX:
-            match = regex.match(source)
-            if match:
-                matched_text = match.group(0)
-                tokens.append((token_type, matched_text))
-                source = source[len(matched_text) :]
-                break
+        match = COMPILED_REGEX.match(source)
+        if match:
+            token_type = match.lastgroup
+            lexeme = match.group()
+            if token_type != "WHITESPACE":
+                tokens.append((token_type, lexeme))
+            source = source[len(lexeme) :]
         else:
-            raise ValueError(f"Unexpected token at: {source[:20]}")
+            raise ValueError(f"Unexpected token at: {source[0]}")
 
     return tokens
