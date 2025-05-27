@@ -22,27 +22,27 @@ class AsmProgram(NamedTuple):
     function_def: FunctionDefinition
 
 
+def _visit_statement(stmt):
+    assert stmt.type == "ReturnStatement"
+    assert stmt.value.type == "IntegerLiteral"
+    assert isinstance(stmt.value.value, int)
+    return Instruction(opcode="RETURN", operands=[stmt.value.value, "eax"])
+
+
+def _visit_function(function) -> FunctionDefinition:
+    assert function.type == "Function", f"{function.type=}"
+    return FunctionDefinition(
+        name=function.name,
+        instructions=[
+            _visit_statement(function.body),
+        ],
+    )
+
+
 def ast_to_asm(ast: Program) -> AsmProgram:
-    functions = []
-    for function in ast.functions:
-        assert function.type == "Function", f"{function.type=}"
-        function_def = FunctionDefinition(name=function.name, instructions=[])
-
-        stmt = function.body
-        assert stmt.type == "ReturnStatement"
-        assert stmt.value.type == "IntegerLiteral"
-        assert isinstance(stmt.value.value, int)
-
-        function_def.instructions.append(
-            Instruction(
-                opcode="RETURN",
-                operands=[stmt.value.value, "eax"],
-            )
-        )
-
-        functions.append(function_def)
-
-    return AsmProgram(function_def)
+    functions = [_visit_function(f) for f in ast.functions]
+    assert len(functions) == 1
+    return AsmProgram(functions[0])
 
 
 def _gen_instruction(inst: Instruction) -> List[str]:
