@@ -1,5 +1,3 @@
-import pytest
-
 from cc.lexer import lex
 
 
@@ -8,21 +6,19 @@ def test_empty_src():
 
 
 def test_single_char():
-    src = "(){}-;~"
+    src = "(){};~"
     assert lex(src) == [
         ("LPAREN", "("),
         ("RPAREN", ")"),
         ("LBRACE", "{"),
         ("RBRACE", "}"),
-        ("MINUS", "-"),
         ("SEMICOLON", ";"),
         ("TILDE", "~"),
     ]
 
 
-@pytest.mark.xfail
 def test_one_or_two_chars():
-    src = "! != = == < <= > >= && ||"
+    src = "! != = == < <= > >= & && | || + ++ - --"
     assert lex(src) == [
         ("BANG", "!"),
         ("BANG_EQUAL", "!="),
@@ -32,8 +28,14 @@ def test_one_or_two_chars():
         ("LESS_EQUAL", "<="),
         ("GREATER", ">"),
         ("GREATER_EQUAL", ">="),
-        ("AND", "&&"),
-        ("OR", "||"),
+        ("AMP", "&"),
+        ("AMP_AMP", "&&"),
+        ("PIPE", "|"),
+        ("PIPE_PIPE", "||"),
+        ("PLUS", "+"),
+        ("PLUS_PLUS", "++"),
+        ("MINUS", "-"),
+        ("MINUS_MINUS", "--"),
     ]
 
 
