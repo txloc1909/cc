@@ -22,8 +22,20 @@ def test_unary():
     to_tacky = lambda src: emit_tacky(Parser(lex(src)).parse_exp())[0]  # noqa: E731
 
     assert to_tacky("-42") == [
-        Variable(identifier="tmp.1"),
         UnaryInst(
             op="NEGATE", src=Constant(value=42), dst=Variable(identifier="tmp.1")
+        ),
+    ]
+
+    assert to_tacky("-~42") == [
+        UnaryInst(
+            op="COMPLEMENT",
+            src=Constant(value=42),
+            dst=Variable(identifier="tmp.2"),
+        ),
+        UnaryInst(
+            op="NEGATE",
+            src=Variable(identifier="tmp.2"),
+            dst=Variable(identifier="tmp.3"),
         ),
     ]

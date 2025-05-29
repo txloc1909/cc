@@ -77,17 +77,13 @@ def emit_tacky(expr: parser.Expr) -> tuple[list[Instruction], Value]:
         case parser.Literal(type=type_, value=value):
             assert type_ == "IntegerLiteral", f"{type_=}"
             val = Constant(value=value)
-            return [
-                val,
-            ], val
+            return [], val
         case parser.UnaryExpr(op=op, rhs=rhs):
             instrs, src = emit_tacky(rhs)
-            tacky_op = convert_tacky_op(op)
             dst = make_temp_var()
             code = [
-                *instrs,  # produce code for src
-                dst,  # make dst
-                UnaryInst(tacky_op, src, dst),  # compute dst
+                *instrs,
+                UnaryInst(op=convert_tacky_op(op), src=src, dst=dst),
             ]
             return code, dst
         case _:
