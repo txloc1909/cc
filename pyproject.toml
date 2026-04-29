@@ -1,23 +1,27 @@
-[tool.poetry]
+[project]
 name = "cc"
 version = "0.1.0"
 description = "Writing a C Compiler"
-authors = ["Tran Xuan Loc <tranxuanloc19920@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Tran Xuan Loc", email = "tranxuanloc19920@gmail.com" }]
+license = { text = "MIT" }
 readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
 
-[tool.poetry.scripts]
+[project.scripts]
 cc = "cc:main"
 
-[tool.poetry.dependencies]
-python = ">=3.10"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-black = "^24.10.0"
-pre-commit = "^4.0.1"
-ruff = "^0.7.3"
+[dependency-groups]
+dev = [
+  "pytest>=8.3.3",
+  "black>=24.10.0",
+  "pre-commit>=4.0.1",
+  "ruff>=0.7.3",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cc"]
